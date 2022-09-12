@@ -5,36 +5,36 @@
 
 // COMMAND ----------
 
-val xml2="""<people>
-  <person>
-    <age born="1990-02-24">25</age>
-  </person>
-  <person>
-    <age born="1985-01-01">30</age>
-  </person>
-  <person>
-    <age born="1980-01-01">30</age>
-  </person>
-</people>"""
+// val xml2="""<people>
+//   <person>
+//     <age born="1990-02-24">25</age>
+//   </person>
+//   <person>
+//     <age born="1985-01-01">30</age>
+//   </person>
+//   <person>
+//     <age born="1980-01-01">30</age>
+//   </person>
+// </people>"""
 
-dbutils.fs.put("/FileStore/tables/test/xml/data/age/ages4.xml",xml2)
+// dbutils.fs.put("/FileStore/tables/test/xml/data/age/ages4.xml",xml2)
 
 // COMMAND ----------
 
-val xml3="""<people>
-  <person>
-    <age born="1990-02-24">25</age>
-    <name>Hyukjin</name>
-  </person>
-  <person>
-    <age born="1985-01-01"></age>
-  </person>
-  <person>
-    <age born="1980-01-01">30</age>
-  </person>
-</people>"""
+// val xml3="""<people>
+//   <person>
+//     <age born="1990-02-24">25</age>
+//     <name>Hyukjin</name>
+//   </person>
+//   <person>
+//     <age born="1985-01-01"></age>
+//   </person>
+//   <person>
+//     <age born="1980-01-01">30</age>
+//   </person>
+// </people>"""
 
-dbutils.fs.put("/FileStore/tables/test/xml/data/age/ages5.xml",xml3)
+// dbutils.fs.put("/FileStore/tables/test/xml/data/age/ages5.xml",xml3)
 
 // COMMAND ----------
 
@@ -70,9 +70,19 @@ val df = spark.readStream.format("cloudFiles")
   .option("cloudFiles.useNotifications", "false")
   .option("cloudFiles.format", "binaryFile")
   .load("/FileStore/tables/test/xml/data/age/")
-  .select(toStrUDF($"content").alias("text")).select(from_xml($"text", payloadSchema).alias("parsed"))
+  .select(toStrUDF($"content").alias("text")).select(from_xml($"text", payloadSchema).alias("payload"))
   .withColumn("path",input_file_name)
 
+
+// COMMAND ----------
+
+import com.databricks.spark.xml.functions.from_xml
+import com.databricks.spark.xml.schema_of_xml
+import spark.implicits._
+
+// val df = ... /// DataFrame with XML in column 'payload'
+val payloadSchema = schema_of_xml(df.select("payload").as[String])
+val parsed = df.withColumn("parsed", from_xml($"payload", payloadSchema))
 
 // COMMAND ----------
 

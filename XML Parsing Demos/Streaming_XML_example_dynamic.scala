@@ -25,13 +25,9 @@ val df = spark.readStream.format("cloudFiles")
   .option("cloudFiles.useNotifications", "false")
   .option("cloudFiles.format", "binaryFile")
   .load("/mnt/ademianczuk-1/data/xml/")
-  .select(toStrUDF($"content").alias("text")).select(from_xml($"text", payloadSchema).alias("parsed"))
+  .select(toStrUDF($"content").alias("text")).select(from_xml($"text", payloadSchema).alias("payload"))
   .withColumn("path",input_file_name)
 
 // COMMAND ----------
 
 display(df)
-
-// COMMAND ----------
-
-
