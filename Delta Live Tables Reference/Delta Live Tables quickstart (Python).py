@@ -9,6 +9,11 @@
 
 # COMMAND ----------
 
+# MAGIC %md
+# MAGIC [Delta Live Tables Documentation](https://docs.databricks.com/workflows/delta-live-tables/delta-live-tables-quickstart.html#delta-live-tables-quickstart)
+
+# COMMAND ----------
+
 # DBTITLE 1,Imports
 import dlt
 from pyspark.sql.functions import *
