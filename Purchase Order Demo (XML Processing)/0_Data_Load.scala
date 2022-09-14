@@ -54,7 +54,8 @@ val toStrUDF = udf((bytes: Array[Byte]) => new String(bytes, "UTF-8"))
 
 //Identify the schema of the collective files in the target directory. This only works if all files being read-in have the same structure.
 //IMPORTANT: If you read all of the files in the source bucket, this can take a while. Here I am using an analog of the xml file just to build the schema.
-val df_schema = spark.read.format("binaryFile").load("dbfs:/FileStore/Users/andrij.demianczuk@databricks.com/pos.xml").select(toStrUDF($"content").alias("text"))
+//val df_schema = spark.read.format("binaryFile").load("dbfs:/FileStore/Users/andrij.demianczuk@databricks.com/pos.xml").select(toStrUDF($"content").alias("text"))
+val df_schema = spark.read.format("binaryFile").load(_path).select(toStrUDF($"content").alias("text"))
   
 // This is costlier operation when we have too many files because of file-listing schema inference, it is best to use the user-defined custom schema. This is why we're just going to opt to use a single example file.
 val payloadSchema = schema_of_xml(df_schema.select("text").as[String])
