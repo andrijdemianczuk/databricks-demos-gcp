@@ -58,7 +58,7 @@ df2 = df.withColumn("row", f.row_number().over(windowPart)) \
 delta_loc_po = "dbfs:/FileStore/Users/andrij.demianczuk@databricks.com/tmp/PurchaseOrders/po_purchase_agg"
 write_fmt = 'delta'
 table_name = 'g_purchaseorders_pAgg'
-write_mode = 'append'
+write_mode = 'overwrite'
 #partition_by = "_PurchaseOrderNumber"
 database = "ademianczuk"
 

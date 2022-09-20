@@ -43,7 +43,7 @@ df2 = df2.withColumnRenamed("sum(Quantity)","Total_Items_Ordered")
 delta_loc_po = "dbfs:/FileStore/Users/andrij.demianczuk@databricks.com/tmp/PurchaseOrders/po_purchase_quant"
 write_fmt = 'delta'
 table_name = 'g_purchaseorders_pQuant'
-write_mode = 'append'
+write_mode = 'overwrite'
 #partition_by = "_PurchaseOrderNumber"
 database = "ademianczuk"
 
