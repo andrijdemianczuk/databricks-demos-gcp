@@ -12,7 +12,7 @@
 
 # COMMAND ----------
 
-df = spark.table("ademianczuk.s_PurchaseOrders_summary")
+df = spark.table("default.s_PurchaseOrders_summary")
 df.printSchema()
 
 # COMMAND ----------
@@ -43,7 +43,7 @@ write_fmt = 'delta'
 table_name = 's_purchaseorders_detail'
 write_mode = 'overwrite'
 partition_by = "State"
-database = "ademianczuk"
+database = "default"
 
 # COMMAND ----------
 

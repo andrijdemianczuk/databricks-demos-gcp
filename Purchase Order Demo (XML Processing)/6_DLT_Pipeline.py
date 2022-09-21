@@ -13,7 +13,7 @@ from pyspark.sql.window import Window
   comment="The silver dataset after it's been parsed by the Purchase-Order-Processing workflow"
 )
 def dlt_purchaseorders_raw():
-  return(spark.table("ademianczuk.s_PurchaseOrders_summary"))
+  return(spark.table("default.s_PurchaseOrders_summary"))
 
 # COMMAND ----------
 

@@ -19,7 +19,7 @@ from pyspark.sql.window import Window
 # COMMAND ----------
 
 # DBTITLE 1,Variables
-database = "ademianczuk"
+database = "default"
 
 # COMMAND ----------
 
@@ -60,7 +60,7 @@ write_fmt = 'delta'
 table_name = 'g_purchaseorders_pAgg'
 write_mode = 'overwrite'
 #partition_by = "_PurchaseOrderNumber"
-database = "ademianczuk"
+database = "default"
 
 # COMMAND ----------
 

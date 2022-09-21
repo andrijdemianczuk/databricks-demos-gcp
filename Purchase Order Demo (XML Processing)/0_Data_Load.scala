@@ -30,8 +30,8 @@ val bucket_name="ademianczuk-1"
 val _root="/mnt/"
 val data_loc="/data/xml/"
 val _path=_root+bucket_name+data_loc
-val username="ademianczuk"
-val table_name = "ademianczuk.b_PurchaseOrders"
+val username="default"
+val table_name = "default.b_PurchaseOrders"
 val checkpoint_path = "/tmp/ademianczuk/_checkpoint"
 
 // COMMAND ----------

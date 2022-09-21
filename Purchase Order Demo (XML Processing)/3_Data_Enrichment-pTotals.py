@@ -18,7 +18,7 @@ from pyspark.sql import functions as f
 # COMMAND ----------
 
 # DBTITLE 1,Variables
-database = "ademianczuk"
+database = "default"
 
 # COMMAND ----------
 
@@ -45,7 +45,7 @@ write_fmt = 'delta'
 table_name = 'g_purchaseorders_pTotals'
 write_mode = 'overwrite'
 #partition_by = "_PurchaseOrderNumber"
-database = "ademianczuk"
+database = "default"
 
 # COMMAND ----------
 
