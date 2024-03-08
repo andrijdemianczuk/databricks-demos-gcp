@@ -191,7 +191,7 @@ def pubsub_silver():
 
 # DBTITLE 1,Silver to Gold
 @dlt.table(comment="Aggregated values by window", table_properties={"pipelines.reset.allowed": "true"})
-def pubsub_gold():
+def pubsub_gold_devices():
   
   df = dlt.readStream("pubsub_silver")
   
@@ -202,12 +202,33 @@ def pubsub_gold():
 
 # COMMAND ----------
 
-# @dlt.table(comment="Message Counts per window", table_properties={"pipelines.reset.allowed": "true"})
-# def pubsub_message_status_gold():
-  
-#   df = dlt.readStream("pubsub_silver")
-  
-#   df = (df.groupBy("well", "segment", window("eventTime", "60 minutes", "10 minutes"))
-#         .agg(countDistinct("userequipment_model_name").alias("count_dist_device_model"), countDistinct("cell_area").alias("count_dist_area"), countDistinct("create_user_id").alias("count_dist_users"))
-#         .orderBy(col("window.start")))
-#   return df
+# MAGIC %md
+# MAGIC ## Watermarks
+# MAGIC Watermarks are very similar to sliding windows, but can be updated dynamically with late events. This is a handy way to deal with streams that may submit events in a non-ordinal fashion, or if you want to order / bucket by a different feature. This also takes into account terminated streams that require back-fill when resumed. More info and a complete & comprehensive explanation of how all things structured streaming can be found [here](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#handling-late-data-and-watermarking)
+
+# COMMAND ----------
+
+@dlt.table(comment="Aggregated values by window", table_properties={"pipelines.reset.allowed": "true"})
+def pubsub_gold_cell_area():
+  return (
+    dlt.read_stream("pubsub_silver")
+      .withWatermark("eventTime", "10 minutes")
+      .groupBy(window("eventTime", "5 minutes").alias("time"))
+      .agg(approx_count_distinct("cell_area").alias("count_dist_cell_area"))
+  )
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC ## A Quick Note on Gold Tables
+# MAGIC Sometimes it benefits us to have a materliazed table or view as a 'gold' table. Gold tables don't necessarily need to be aggregate-level and can contain a small subset of data. In our case, we'll want to isolate a handful of events for our gold streaming to our data sink. This will be useful for late-stage queries that don't rely on pushdown predicates.
+
+# COMMAND ----------
+
+@dlt.table(comment="A subset of the silver table for direct access / direct query that are pre-filtered for certain events", table_properties={"pipelines.reset.allowed":"true"})
+# @dlt.table(comment="A subset of the silver table for direct access / direct query that are pre-filtered for certain events", table_properties={"pipelines.reset.allowed":"true", "delta.enableIcebergCompatV2":"true",
+#   "delta.universalFormat.enabledFormats":"iceberg", "delta.columnMapping.mode":"name", "delta.minReaderVersion": "2", "delta.minWriterVersion":"5"})
+def pubsub_gold_terminated_messages():
+  return(dlt.read_stream("pubsub_silver")
+         .filter((col("message_name") == "BYE")|(col("message_name")=="BYE_T"))
+         .withColumn("eventTime", current_timestamp()))
